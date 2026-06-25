@@ -1,0 +1,1383 @@
+, <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبات مالية ذكية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0D1117;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8a6f2e;
+    --surface: #111820;
+    --surface2: #161E28;
+    --surface3: #1C2633;
+    --border: rgba(201,168,76,0.18);
+    --text: #E8E2D5;
+    --muted: #7A8899;
+    --green: #3DD68C;
+    --red: #F07070;
+    --blue: #5B9CF6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRID LINES BG ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+  }
+
+  .logo-text span { color: var(--gold); }
+
+  .nav-tabs {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-tab {
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  .nav-tab:hover, .nav-tab.active {
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: rgba(201,168,76,0.06);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    letter-spacing: 0.03em;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  h1 {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 540px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .scroll-hint-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ─── CALCULATORS SECTION ─── */
+  #calculators {
+    position: relative;
+    padding: 2rem 2rem 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ─── TABS ─── */
+  .calc-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .calc-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.3rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Cairo', sans-serif;
+  }
+
+  .calc-tab:hover {
+    border-color: rgba(201,168,76,0.4);
+    color: var(--text);
+  }
+
+  .calc-tab.active {
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .tab-emoji { font-size: 1rem; }
+
+  /* ─── CALC PANELS ─── */
+  .calc-panel { display: none; }
+  .calc-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+  @media (max-width: 900px) {
+    .calc-panel.active { grid-template-columns: 1fr; }
+    .nav-tabs { display: none; }
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(ellipse at top right, rgba(201,168,76,0.06), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-title {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .card-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05));
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* ─── FORM ─── */
+  .field {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="number"], input[type="range"], select {
+    width: 100%;
+    background: var(--surface3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    direction: ltr;
+    text-align: right;
+  }
+
+  input[type="number"]:focus, select:focus {
+    border-color: rgba(201,168,76,0.5);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+  }
+
+  select option { background: var(--surface2); }
+
+  input[type="range"] {
+    padding: 0;
+    height: 6px;
+    border-radius: 100px;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: linear-gradient(to left, var(--gold) var(--val, 50%), var(--surface3) var(--val, 50%));
+    border: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(201,168,76,0.2);
+    border: 2px solid var(--ink);
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .range-val {
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .btn-calc {
+    width: 100%;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border: none;
+    border-radius: 12px;
+    color: var(--ink);
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-calc:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+  }
+
+  .btn-calc:active { transform: translateY(0); }
+
+  /* ─── RESULTS ─── */
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .result-header {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .result-main {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--surface2);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .result-main-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .result-main-val {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 2.8rem;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .result-main-unit {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .result-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .result-row-label {
+    font-size: 0.84rem;
+    color: var(--muted);
+  }
+
+  .result-row-val {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .val-green { color: var(--green); }
+  .val-red { color: var(--red); }
+  .val-gold { color: var(--gold); }
+  .val-blue { color: var(--blue); }
+
+  /* ─── CHART ─── */
+  .chart-container {
+    height: 160px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    padding-top: 10px;
+  }
+
+  .bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    position: relative;
+  }
+
+  .bar:hover { filter: brightness(1.2); }
+
+  .bar-principal { background: linear-gradient(to top, rgba(91,156,246,0.3), rgba(91,156,246,0.7)); }
+  .bar-interest { background: linear-gradient(to top, rgba(240,112,112,0.3), rgba(240,112,112,0.7)); }
+
+  .chart-legend {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    margin-top: 0.8rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 300px;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* ─── SECTION HEADING ─── */
+  .section-head {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-top: 4rem;
+  }
+
+  .section-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-head h2 {
+    font-family: 'Tajawal', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  /* ─── TOOLTIP ─── */
+  .tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+    color: var(--text);
+  }
+
+  .bar:hover .tooltip { opacity: 1; }
+
+  /* ─── AMORTIZATION TABLE ─── */
+  .amort-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 1rem;
+  }
+
+  .amort-table th {
+    color: var(--muted);
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .amort-table td {
+    padding: 0.45rem 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-weight: 500;
+  }
+
+  .amort-table tr:hover td { background: rgba(201,168,76,0.04); }
+
+  /* ─── PROGRESS RING ─── */
+  .progress-ring-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+
+  svg.ring { transform: rotate(-90deg); }
+
+  .ring-label {
+    text-align: center;
+  }
+
+  .ring-val {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--gold);
+  }
+
+  .ring-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  footer strong { color: var(--gold); }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .number-roll {
+    display: inline-block;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    h1 { font-size: 2.2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .stat-num { font-size: 1.6rem; }
+    .calc-tab span { display: none; }
+    .calc-tab { padding: 0.6rem 0.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🧮</div>
+    <div class="logo-text">حاسبات <span>ذكية</span></div>
+  </div>
+  <ul class="nav-tabs">
+    <li><button class="nav-tab" onclick="scrollTo('#calculators')">الحاسبات</button></li>
+    <li><button class="nav-tab" onclick="switchTab('car')">قرض السيارة</button></li>
+    <li><button class="nav-tab" onclick="switchTab('mortgage')">الرهن العقاري</button></li>
+    <li><button class="nav-tab" onclick="switchTab('zakat')">الزكاة</button></li>
+    <li><button class="nav-tab" onclick="switchTab('savings')">الادخار</button></li>
+    <li><button class="nav-tab" onclick="switchTab('insurance')">التأمين</button></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    أدوات مالية مجانية وموثوقة
+  </div>
+  <h1>قرارات مالية<br><em>أكثر ذكاءً</em></h1>
+  <p class="hero-sub">خمس حاسبات مالية متكاملة تساعدك في التخطيط لمستقبلك — من قرض السيارة إلى التقاعد، كل شيء في مكان واحد.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">أدوات تفاعلية</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">سيناريوهات</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">رسوم أو اشتراكات</div>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('calculators').scrollIntoView({behavior:'smooth'})">
+    <span>ابدأ الآن</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<!-- CALCULATORS -->
+<div id="calculators">
+  <div class="section-head">
+    <div class="section-eyebrow">الأدوات المالية</div>
+    <h2>اختر الحاسبة المناسبة</h2>
+  </div>
+
+  <!-- TABS -->
+  <div class="calc-tabs">
+    <button class="calc-tab active" onclick="switchTab('car')" data-tab="car">
+      <span class="tab-emoji">🚗</span><span>قرض السيارة</span>
+    </button>
+    <button class="calc-tab" onclick="switchTab('mortgage')" data-tab="mortgage">
+      <span class="tab-emoji">🏠</span><span>الرهن العقاري</span>
+    </button>
+    <button class="calc-tab" onclick="switchTab('insurance')" data-tab="insurance">
+      <span class="tab-emoji">🛡️</span><span>التأمين</span>
+    </button>
+    <button class="calc-tab" onclick="switchTab('zakat')" data-tab="zakat">
+      <span class="tab-emoji">☪️</span><span>الزكاة</span>
+    </button>
+    <button class="calc-tab" onclick="switchTab('savings')" data-tab="savings">
+      <span class="tab-emoji">💰</span><span>الادخار والتقاعد</span>
+    </button>
+  </div>
+
+  <!-- ═══ CAR LOAN ═══ -->
+  <div class="calc-panel active" id="panel-car">
+    <div class="card">
+      <div class="card-title"><div class="card-icon">🚗</div>حاسبة قرض السيارة</div>
+
+      <div class="field">
+        <label>سعر السيارة (ريال)</label>
+        <input type="number" id="car-price" value="120000" min="0" oninput="calcCar()">
+      </div>
+      <div class="field">
+        <label>الدفعة الأولى — <span class="range-val" id="car-down-val">20%</span></label>
+        <input type="range" id="car-down" min="0" max="80" value="20" oninput="updateRange(this,'car-down-val','%');calcCar()">
+        <div class="range-labels"><span>0%</span><span>80%</span></div>
+      </div>
+      <div class="field">
+        <label>مدة القرض</label>
+        <select id="car-term" onchange="calcCar()">
+          <option value="12">سنة واحدة (12 شهر)</option>
+          <option value="24">سنتان (24 شهر)</option>
+          <option value="36" selected>3 سنوات (36 شهر)</option>
+          <option value="48">4 سنوات (48 شهر)</option>
+          <option value="60">5 سنوات (60 شهر)</option>
+          <option value="72">6 سنوات (72 شهر)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>معدل الفائدة السنوي — <span class="range-val" id="car-rate-val">4.5%</span></label>
+        <input type="range" id="car-rate" min="1" max="20" step="0.1" value="4.5" oninput="updateRange(this,'car-rate-val','%');calcCar()">
+        <div class="range-labels"><span>1%</span><span>20%</span></div>
+      </div>
+      <button class="btn-calc" onclick="calcCar()">احسب القرض ←</button>
+    </div>
+
+    <div class="result-card" id="car-result">
+      <div class="empty-state" id="car-empty">
+        <div class="empty-icon">🚗</div>
+        <div class="empty-text">أدخل بيانات القرض لعرض النتائج</div>
+      </div>
+      <div id="car-output" style="display:none; display:flex; flex-direction:column; gap:1rem;">
+        <div class="result-header">📊 ملخص القرض</div>
+        <div class="result-main">
+          <div class="result-main-label">القسط الشهري</div>
+          <div class="result-main-val" id="car-monthly">—</div>
+          <div class="result-main-unit">ريال / شهر</div>
+        </div>
+        <div class="result-rows">
+          <div class="result-row"><span class="result-row-label">مبلغ القرض</span><span class="result-row-val val-blue" id="car-loan">—</span></div>
+          <div class="result-row"><span class="result-row-label">إجمالي الأقساط</span><span class="result-row-val val-gold" id="car-total">—</span></div>
+          <div class="result-row"><span class="result-row-label">إجمالي الفوائد</span><span class="result-row-val val-red" id="car-interest">—</span></div>
+          <div class="result-row"><span class="result-row-label">الدفعة الأولى</span><span class="result-row-val val-green" id="car-down-amt">—</span></div>
+        </div>
+        <div>
+          <div class="result-row-label" style="margin-bottom:0.6rem; font-size:0.78rem; color:var(--muted);">توزيع الأقساط عبر السنوات</div>
+          <div class="chart-container" id="car-chart"></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:rgba(91,156,246,0.7)"></div>أصل القرض</div>
+            <div class="legend-item"><div class="legend-dot" style="background:rgba(240,112,112,0.7)"></div>فوائد</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MORTGAGE ═══ -->
+  <div class="calc-panel" id="panel-mortgage">
+    <div class="card">
+      <div class="card-title"><div class="card-icon">🏠</div>حاسبة الرهن العقاري</div>
+
+      <div class="field">
+        <label>قيمة العقار (ريال)</label>
+        <input type="number" id="mort-price" value="800000" oninput="calcMort()">
+      </div>
+      <div class="field">
+        <label>الدفعة الأولى — <span class="range-val" id="mort-down-val">20%</span></label>
+        <input type="range" id="mort-down" min="5" max="50" value="20" oninput="updateRange(this,'mort-down-val','%');calcMort()">
+        <div class="range-labels"><span>5%</span><span>50%</span></div>
+      </div>
+      <div class="field">
+        <label>مدة القرض (سنوات)</label>
+        <select id="mort-term" onchange="calcMort()">
+          <option value="5">5 سنوات</option>
+          <option value="10">10 سنوات</option>
+          <option value="15">15 سنوات</option>
+          <option value="20" selected>20 سنة</option>
+          <option value="25">25 سنة</option>
+          <option value="30">30 سنة</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>معدل الفائدة السنوي — <span class="range-val" id="mort-rate-val">5.5%</span></label>
+        <input type="range" id="mort-rate" min="1" max="15" step="0.1" value="5.5" oninput="updateRange(this,'mort-rate-val','%');calcMort()">
+        <div class="range-labels"><span>1%</span><span>15%</span></div>
+      </div>
+      <div class="field">
+        <label>رسوم إدارية ورسوم التسجيل (ريال)</label>
+        <input type="number" id="mort-fees" value="5000" oninput="calcMort()">
+      </div>
+      <button class="btn-calc" onclick="calcMort()">احسب الرهن ←</button>
+    </div>
+
+    <div class="result-card" id="mort-result">
+      <div class="result-header">🏠 ملخص الرهن العقاري</div>
+      <div class="result-main">
+        <div class="result-main-label">القسط الشهري</div>
+        <div class="result-main-val" id="mort-monthly">—</div>
+        <div class="result-main-unit">ريال / شهر</div>
+      </div>
+      <div class="result-rows">
+        <div class="result-row"><span class="result-row-label">مبلغ التمويل</span><span class="result-row-val val-blue" id="mort-loan">—</span></div>
+        <div class="result-row"><span class="result-row-label">إجمالي المدفوعات</span><span class="result-row-val val-gold" id="mort-total">—</span></div>
+        <div class="result-row"><span class="result-row-label">إجمالي الفوائد</span><span class="result-row-val val-red" id="mort-interest">—</span></div>
+        <div class="result-row"><span class="result-row-label">التكلفة الكاملة للعقار</span><span class="result-row-val val-green" id="mort-full">—</span></div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;">نسبة الفوائد من إجمالي المدفوعات</div>
+        <div class="progress-ring-wrap">
+          <svg class="ring" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+            <circle id="mort-ring" cx="50" cy="50" r="42" fill="none" stroke="url(#ringGrad)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="264" stroke-dashoffset="264" style="transition:stroke-dashoffset 0.8s ease"/>
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#F07070"/>
+                <stop offset="100%" stop-color="#C9A84C"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="ring-label">
+            <div class="ring-val" id="mort-ring-pct">—</div>
+            <div class="ring-desc">فوائد</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ INSURANCE ═══ -->
+  <div class="calc-panel" id="panel-insurance">
+    <div class="card">
+      <div class="card-title"><div class="card-icon">🛡️</div>حاسبة التأمين الصحي</div>
+
+      <div class="field">
+        <label>نوع التأمين</label>
+        <select id="ins-type" onchange="calcIns()">
+          <option value="basic">أساسي</option>
+          <option value="standard" selected>معياري</option>
+          <option value="premium">متميز</option>
+          <option value="elite">نخبة</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>العمر (سنة)</label>
+        <input type="number" id="ins-age" value="30" min="18" max="70" oninput="calcIns()">
+      </div>
+      <div class="field">
+        <label>عدد أفراد الأسرة</label>
+        <select id="ins-members" onchange="calcIns()">
+          <option value="1" selected>فرد واحد</option>
+          <option value="2">فردان (زوجان)</option>
+          <option value="3">3 أفراد</option>
+          <option value="4">4 أفراد</option>
+          <option value="5">5+ أفراد</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>حالة التدخين</label>
+        <select id="ins-smoke" onchange="calcIns()">
+          <option value="0">غير مدخن</option>
+          <option value="1">مدخن</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>الحد الأقصى للتغطية (مليون ريال) — <span class="range-val" id="ins-cov-val">1</span></label>
+        <input type="range" id="ins-cov" min="0.5" max="5" step="0.5" value="1" oninput="updateRange(this,'ins-cov-val','');calcIns()">
+        <div class="range-labels"><span>0.5م</span><span>5م</span></div>
+      </div>
+      <button class="btn-calc" onclick="calcIns()">احسب قسط التأمين ←</button>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">🛡️ ملخص التأمين الصحي</div>
+      <div class="result-main">
+        <div class="result-main-label">القسط السنوي التقديري</div>
+        <div class="result-main-val" id="ins-annual">—</div>
+        <div class="result-main-unit">ريال / سنة</div>
+      </div>
+      <div class="result-rows">
+        <div class="result-row"><span class="result-row-label">القسط الشهري</span><span class="result-row-val val-gold" id="ins-monthly">—</span></div>
+        <div class="result-row"><span class="result-row-label">نوع الخطة</span><span class="result-row-val val-blue" id="ins-plan">—</span></div>
+        <div class="result-row"><span class="result-row-label">تغطية الأسنان والبصريات</span><span class="result-row-val" id="ins-dental">—</span></div>
+        <div class="result-row"><span class="result-row-label">تحمل السنوي (Deductible)</span><span class="result-row-val val-red" id="ins-ded">—</span></div>
+        <div class="result-row"><span class="result-row-label">نسبة التشارك في التكلفة</span><span class="result-row-val val-muted" id="ins-coinsure">—</span></div>
+      </div>
+      <div style="padding:1rem; background:rgba(201,168,76,0.06); border-radius:12px; border:1px solid var(--border)">
+        <div style="font-size:0.78rem; color:var(--muted); line-height:1.6" id="ins-note">
+          * هذا تقدير استرشادي. الأسعار الفعلية تختلف حسب شركة التأمين والحالة الصحية.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ZAKAT ═══ -->
+  <div class="calc-panel" id="panel-zakat">
+    <div class="card">
+      <div class="card-title"><div class="card-icon">☪️</div>حاسبة الزكاة</div>
+
+      <div class="field">
+        <label>النقد والأرصدة البنكية (ريال)</label>
+        <input type="number" id="zak-cash" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <div class="field">
+        <label>قيمة الذهب والفضة (ريال)</label>
+        <input type="number" id="zak-gold" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <div class="field">
+        <label>قيمة الأسهم والاستثمارات (ريال)</label>
+        <input type="number" id="zak-stocks" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <div class="field">
+        <label>قيمة بضاعة التجارة (ريال)</label>
+        <input type="number" id="zak-trade" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <div class="field">
+        <label>الديون المستحقة لك (ريال)</label>
+        <input type="number" id="zak-recv" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <div class="field">
+        <label>الديون المترتبة عليك (ريال)</label>
+        <input type="number" id="zak-debt" value="0" min="0" oninput="calcZakat()">
+      </div>
+      <button class="btn-calc" onclick="calcZakat()">احسب الزكاة ←</button>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">☪️ حساب الزكاة</div>
+      <div id="zakat-output">
+        <div class="result-main">
+          <div class="result-main-label">مقدار الزكاة الواجبة</div>
+          <div class="result-main-val" id="zak-amount">—</div>
+          <div class="result-main-unit">ريال</div>
+        </div>
+        <div class="result-rows" style="margin-top:1rem">
+          <div class="result-row"><span class="result-row-label">إجمالي الوعاء الزكوي</span><span class="result-row-val val-blue" id="zak-total">—</span></div>
+          <div class="result-row"><span class="result-row-label">النصاب (85 جرام ذهب)</span><span class="result-row-val val-gold">≈ 21,200 ريال</span></div>
+          <div class="result-row"><span class="result-row-label">نسبة الزكاة</span><span class="result-row-val val-green">2.5%</span></div>
+          <div class="result-row">
+            <span class="result-row-label">حالة النصاب</span>
+            <span class="result-row-val" id="zak-nisab">—</span>
+          </div>
+        </div>
+        <div style="padding:1rem; background:rgba(61,214,140,0.06); border-radius:12px; border:1px solid rgba(61,214,140,0.15); margin-top:1rem">
+          <div style="font-size:0.82rem; color:var(--muted); line-height:1.7" id="zak-note">
+            تُحسب الزكاة على المال الذي مضى عليه حول كامل (سنة قمرية) وبلغ النصاب. 
+            نصاب الذهب: 85 جراماً، ونصاب الفضة: 595 جراماً.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SAVINGS ═══ -->
+  <div class="calc-panel" id="panel-savings">
+    <div class="card">
+      <div class="card-title"><div class="card-icon">💰</div>حاسبة الادخار والتقاعد</div>
+
+      <div class="field">
+        <label>رأس المال الابتدائي (ريال)</label>
+        <input type="number" id="sav-initial" value="50000" oninput="calcSav()">
+      </div>
+      <div class="field">
+        <label>التوفير الشهري (ريال)</label>
+        <input type="number" id="sav-monthly" value="3000" oninput="calcSav()">
+      </div>
+      <div class="field">
+        <label>معدل العائد السنوي — <span class="range-val" id="sav-rate-val">7%</span></label>
+        <input type="range" id="sav-rate" min="1" max="20" step="0.5" value="7" oninput="updateRange(this,'sav-rate-val','%');calcSav()">
+        <div class="range-labels"><span>1%</span><span>20%</span></div>
+      </div>
+      <div class="field">
+        <label>مدة الادخار (سنوات) — <span class="range-val" id="sav-years-val">20 سنة</span></label>
+        <input type="range" id="sav-years" min="1" max="40" value="20" oninput="updateRange(this,'sav-years-val',' سنة');calcSav()">
+        <div class="range-labels"><span>1</span><span>40</span></div>
+      </div>
+      <div class="field">
+        <label>معدل التضخم السنوي — <span class="range-val" id="sav-inf-val">3%</span></label>
+        <input type="range" id="sav-inf" min="0" max="10" step="0.5" value="3" oninput="updateRange(this,'sav-inf-val','%');calcSav()">
+        <div class="range-labels"><span>0%</span><span>10%</span></div>
+      </div>
+      <button class="btn-calc" onclick="calcSav()">احسب المدخرات ←</button>
+    </div>
+
+    <div class="result-card">
+      <div class="result-header">💰 توقعات الثروة</div>
+      <div class="result-main">
+        <div class="result-main-label">الثروة المتوقعة</div>
+        <div class="result-main-val" id="sav-final">—</div>
+        <div class="result-main-unit">ريال عند نهاية المدة</div>
+      </div>
+      <div class="result-rows">
+        <div class="result-row"><span class="result-row-label">إجمالي ما وفرته</span><span class="result-row-val val-blue" id="sav-contributed">—</span></div>
+        <div class="result-row"><span class="result-row-label">العائد التراكمي</span><span class="result-row-val val-green" id="sav-earned">—</span></div>
+        <div class="result-row"><span class="result-row-label">القيمة الحقيقية (بعد التضخم)</span><span class="result-row-val val-gold" id="sav-real">—</span></div>
+        <div class="result-row"><span class="result-row-label">مضاعف المال</span><span class="result-row-val val-blue" id="sav-mult">—</span></div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem;margin-top:0.5rem;">نمو الثروة عبر السنوات</div>
+        <div class="chart-container" id="sav-chart" style="height:130px"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>حاسبات مالية ذكية</strong> — جميع الحسابات تقديرية للأغراض التعليمية فقط.<br>
+  <span style="margin-top:0.5rem; display:block; opacity:0.5">استشر مستشاراً مالياً معتمداً قبل اتخاذ أي قرار مالي.</span>
+</footer>
+
+<script>
+// ─── UTILS ───
+const fmt = n => Math.round(n).toLocaleString('ar-SA');
+const fmtD = n => n.toLocaleString('ar-SA', {minimumFractionDigits:0, maximumFractionDigits:0});
+
+function updateRange(el, labelId, suffix) {
+  document.getElementById(labelId).textContent = el.value + suffix;
+  const min = +el.min, max = +el.max, val = +el.value;
+  const pct = ((val - min) / (max - min)) * 100;
+  el.style.setProperty('--val', pct + '%');
+}
+
+// init ranges
+document.querySelectorAll('input[type=range]').forEach(r => {
+  const min = +r.min, max = +r.max, val = +r.value;
+  const pct = ((val - min) / (max - min)) * 100;
+  r.style.setProperty('--val', pct + '%');
+});
+
+function switchTab(name) {
+  document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  document.getElementById('calculators').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ─── CAR LOAN ───
+function calcCar() {
+  const price = +document.getElementById('car-price').value;
+  const downPct = +document.getElementById('car-down').value / 100;
+  const months = +document.getElementById('car-term').value;
+  const rate = +document.getElementById('car-rate').value / 100 / 12;
+
+  const downAmt = price * downPct;
+  const loan = price - downAmt;
+
+  let monthly;
+  if (rate === 0) {
+    monthly = loan / months;
+  } else {
+    monthly = loan * (rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+  }
+
+  const total = monthly * months;
+  const interest = total - loan;
+
+  document.getElementById('car-empty').style.display = 'none';
+  const out = document.getElementById('car-output');
+  out.style.display = 'flex';
+
+  animateNum('car-monthly', monthly);
+  document.getElementById('car-loan').textContent = fmt(loan) + ' ريال';
+  document.getElementById('car-total').textContent = fmt(total) + ' ريال';
+  document.getElementById('car-interest').textContent = fmt(interest) + ' ريال';
+  document.getElementById('car-down-amt').textContent = fmt(downAmt) + ' ريال';
+
+  // Build chart per year
+  buildCarChart(loan, rate, months);
+}
+
+function buildCarChart(loan, monthlyRate, totalMonths) {
+  const years = Math.ceil(totalMonths / 12);
+  const monthly = loan === 0 ? 0 : (monthlyRate === 0 ? loan/totalMonths :
+    loan * (monthlyRate * Math.pow(1+monthlyRate,totalMonths)) / (Math.pow(1+monthlyRate,totalMonths)-1));
+
+  let bal = loan;
+  const data = [];
+  for (let y = 1; y <= years; y++) {
+    let princ = 0, inter = 0;
+    for (let m = 0; m < 12 && (y-1)*12+m < totalMonths; m++) {
+      const iAmt = bal * monthlyRate;
+      const pAmt = monthly - iAmt;
+      inter += iAmt;
+      princ += pAmt;
+      bal = Math.max(0, bal - pAmt);
+    }
+    data.push({princ, inter, y});
+  }
+
+  const chart = document.getElementById('car-chart');
+  chart.innerHTML = '';
+  const maxVal = Math.max(...data.map(d => d.princ + d.inter));
+  const H = 140;
+
+  data.forEach(d => {
+    const col = document.createElement('div');
+    col.style.cssText = 'flex:1; display:flex; flex-direction:column; justify-content:flex-end; gap:2px; position:relative';
+
+    const pi = document.createElement('div');
+    pi.className = 'bar bar-interest';
+    pi.style.height = ((d.inter / maxVal) * H) + 'px';
+    const pp = document.createElement('div');
+    pp.className = 'bar bar-principal';
+    pp.style.height = ((d.princ / maxVal) * H) + 'px';
+
+    const tip = document.createElement('div');
+    tip.className = 'tooltip';
+    tip.textContent = `س${d.y}: أصل ${fmt(d.princ)} | فائدة ${fmt(d.inter)}`;
+    col.appendChild(tip);
+    col.appendChild(pi);
+    col.appendChild(pp);
+    chart.appendChild(col);
+  });
+}
+
+// ─── MORTGAGE ───
+function calcMort() {
+  const price = +document.getElementById('mort-price').value;
+  const downPct = +document.getElementById('mort-down').value / 100;
+  const years = +document.getElementById('mort-term').value;
+  const rate = +document.getElementById('mort-rate').value / 100 / 12;
+  const fees = +document.getElementById('mort-fees').value;
+  const months = years * 12;
+
+  const downAmt = price * downPct;
+  const loan = price - downAmt;
+
+  let monthly;
+  if (rate === 0) {
+    monthly = loan / months;
+  } else {
+    monthly = loan * (rate * Math.pow(1+rate,months)) / (Math.pow(1+rate,months)-1);
+  }
+
+  const total = monthly * months;
+  const interest = total - loan;
+  const full = total + downAmt + fees;
+  const intPct = (interest / total) * 100;
+
+  document.getElementById('mort-monthly').textContent = fmt(monthly) + '';
+  document.getElementById('mort-loan').textContent = fmt(loan) + ' ريال';
+  document.getElementById('mort-total').textContent = fmt(total) + ' ريال';
+  document.getElementById('mort-interest').textContent = fmt(interest) + ' ريال';
+  document.getElementById('mort-full').textContent = fmt(full) + ' ريال';
+  document.getElementById('mort-ring-pct').textContent = intPct.toFixed(1) + '%';
+
+  const circumference = 2 * Math.PI * 42;
+  const offset = circumference - (intPct / 100) * circumference;
+  document.getElementById('mort-ring').style.strokeDasharray = circumference;
+  document.getElementById('mort-ring').style.strokeDashoffset = offset;
+}
+
+// ─── INSURANCE ───
+function calcIns() {
+  const type = document.getElementById('ins-type').value;
+  const age = +document.getElementById('ins-age').value;
+  const members = +document.getElementById('ins-members').value;
+  const smoke = +document.getElementById('ins-smoke').value;
+  const cov = +document.getElementById('ins-cov').value;
+
+  const basePrices = { basic: 3200, standard: 6500, premium: 12000, elite: 22000 };
+  const planNames = { basic: 'أساسي', standard: 'معياري', premium: 'متميز', elite: 'نخبة' };
+  const deductibles = { basic: 2000, standard: 1000, premium: 500, elite: 0 };
+  const coinsurance = { basic: '20%', standard: '15%', premium: '10%', elite: '5%' };
+  const dental = { basic: 'غير مشمول', standard: 'مشمول جزئياً', premium: 'مشمول كاملاً', elite: 'مشمول كاملاً' };
+
+  let base = basePrices[type];
+  // age factor
+  if (age > 50) base *= 1.6;
+  else if (age > 40) base *= 1.35;
+  else if (age > 30) base *= 1.15;
+  // members
+  base *= (1 + (members - 1) * 0.7);
+  // smoker
+  if (smoke) base *= 1.4;
+  // coverage
+  base *= (0.8 + cov * 0.2);
+
+  const annual = Math.round(base / 100) * 100;
+  const monthly = Math.round(annual / 12 / 10) * 10;
+
+  document.getElementById('ins-annual').textContent = fmt(annual);
+  document.getElementById('ins-monthly').textContent = fmt(monthly) + ' ريال';
+  document.getElementById('ins-plan').textContent = planNames[type];
+  document.getElementById('ins-dental').textContent = dental[type];
+  document.getElementById('ins-ded').textContent = fmt(deductibles[type]) + ' ريال';
+  document.getElementById('ins-coinsure').textContent = coinsurance[type];
+}
+
+// ─── ZAKAT ───
+function calcZakat() {
+  const cash = +document.getElementById('zak-cash').value || 0;
+  const gold = +document.getElementById('zak-gold').value || 0;
+  const stocks = +document.getElementById('zak-stocks').value || 0;
+  const trade = +document.getElementById('zak-trade').value || 0;
+  const recv = +document.getElementById('zak-recv').value || 0;
+  const debt = +document.getElementById('zak-debt').value || 0;
+
+  const NISAB = 21200; // approx SAR
+  const total = Math.max(0, cash + gold + stocks + trade + recv - debt);
+  const zakat = total >= NISAB ? total * 0.025 : 0;
+  const meetsNisab = total >= NISAB;
+
+  document.getElementById('zak-amount').textContent = fmt(zakat);
+  document.getElementById('zak-total').textContent = fmt(total) + ' ريال';
+  document.getElementById('zak-nisab').textContent = meetsNisab ? '✅ بلغ النصاب' : '❌ لم يبلغ النصاب';
+  document.getElementById('zak-nisab').className = 'result-row-val ' + (meetsNisab ? 'val-green' : 'val-red');
+
+  if (!meetsNisab) {
+    document.getElementById('zak-note').textContent =
+      `وعاءك الزكوي (${fmt(total)} ريال) أقل من النصاب البالغ ≈ 21,200 ريال. لا تجب الزكاة.`;
+  } else {
+    document.getElementById('zak-note').textContent =
+      `مبارك! تجب عليك الزكاة. وعاءك الزكوي ${fmt(total)} ريال × 2.5% = ${fmt(zakat)} ريال.`;
+  }
+}
+
+// ─── SAVINGS ───
+function calcSav() {
+  const initial = +document.getElementById('sav-initial').value;
+  const monthly = +document.getElementById('sav-monthly').value;
+  const rate = +document.getElementById('sav-rate').value / 100;
+  const years = +document.getElementById('sav-years').value;
+  const inflation = +document.getElementById('sav-inf').value / 100;
+
+  const r = rate / 12;
+  const n = years * 12;
+
+  // Future value with compound interest
+  const fvInitial = initial * Math.pow(1 + r, n);
+  const fvMonthly = monthly * ((Math.pow(1+r,n) - 1) / r);
+  const fv = fvInitial + fvMonthly;
+
+  const contributed = initial + monthly * n;
+  const earned = fv - contributed;
+  const realVal = fv / Math.pow(1 + inflation, years);
+  const mult = fv / contributed;
+
+  document.getElementById('sav-final').textContent = fmt(fv);
+  document.getElementById('sav-contributed').textContent = fmt(contributed) + ' ريال';
+  document.getElementById('sav-earned').textContent = fmt(earned) + ' ريال';
+  document.getElementById('sav-real').textContent = fmt(realVal) + ' ريال';
+  document.getElementById('sav-mult').textContent = mult.toFixed(2) + 'x';
+
+  buildSavChart(initial, monthly, r, years);
+}
+
+function buildSavChart(initial, monthly, r, totalYears) {
+  const chart = document.getElementById('sav-chart');
+  chart.innerHTML = '';
+
+  const vals = [];
+  for (let y = 1; y <= totalYears; y++) {
+    const n = y * 12;
+    const fv = initial * Math.pow(1+r,n) + monthly * ((Math.pow(1+r,n)-1)/r);
+    vals.push(fv);
+  }
+
+  const maxV = Math.max(...vals);
+  const H = 120;
+  const step = Math.max(1, Math.floor(totalYears / 20));
+
+  vals.forEach((v, i) => {
+    if ((i+1) % step !== 0 && i !== vals.length - 1 && totalYears > 15) return;
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.cssText = `height:${(v/maxV)*H}px; background:linear-gradient(to top, rgba(201,168,76,0.3), rgba(201,168,76,0.8)); flex:1;`;
+    const tip = document.createElement('div');
+    tip.className = 'tooltip';
+    tip.textContent = `سنة ${i+1}: ${fmt(v)} ريال`;
+    bar.appendChild(tip);
+    chart.appendChild(bar);
+  });
+}
+
+function animateNum(id, target) {
+  const el = document.getElementById(id);
+  const start = 0;
+  const dur = 600;
+  const t0 = performance.now();
+  function step(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(start + (target - start) * ease);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ─── INIT ───
+calcCar();
+calcMort();
+calcIns();
+calcZakat();
+calcSav();
+</script>
+</body>
+</html>
